@@ -13,20 +13,14 @@ import com.auth0.jwt.interfaces.*;
 
 public class CreateToken {
 
-    public static String sign(String secret){
+    public static String sign(String secret, Map<String, Object> passportMap){
 
         try {
             Map<String, Object> headerClaims = new HashMap();
             headerClaims.put("typ", "JWT");
             headerClaims.put("alg", "RS256");
             headerClaims.put("jku", "<JKS-URL>");
-            headerClaims.put("kid", "<key-identifier>");
-            
-            Map<String, Object> passportMap = new HashMap();
-            passportMap.put("type", "<passport-visa-type>");
-            passportMap.put("asserted", "<seconds-since-epoch>");
-            passportMap.put("value", "<value-string>");
-            passportMap.put("source", "<source-URL>");
+            headerClaims.put("kid", "<key-identifier>");            
 
             Algorithm algorithm = Algorithm.HMAC256("secret");
             String token = JWT.create()
