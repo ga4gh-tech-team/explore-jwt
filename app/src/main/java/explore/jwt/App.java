@@ -3,24 +3,60 @@
  */
 package explore.jwt;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import explore.jwt.CreateToken;
 
 public class App {
 
+    static public Map<String, String> visaSecrets = new HashMap<String, String>()
+    {
+        {
+        put("StarterKitDatasetsControlledAccessGrants@https://datasets.starterkit.ga4gh.org/" , "87A3B5D68FD88197254D9889B4AAB");
+        put("DatasetAlpha@https://datasets.starterkit.ga4gh.org/" , "BF4BF43A157FB51B49F7AE13B7216");
+        put("DatasetBeta@https://datasets.starterkit.ga4gh.org/" , "C5911B4A7BC2B343C6B7C55FED19D");
+        put("DatasetGamma@https://datasets.starterkit.ga4gh.org/" , "6893F3226CF379E52281CCB4584F7");
+        }
+    };
     public static void main(String[] args) {
 
-        Map<String, Object> passportMap = buildVisa("AffiliationAndRole", 5000000, "", "", new String[]{""}, new String[]{"<by-identifier>"});
-        String jwt = CreateToken.sign("secret", passportMap, "sid", "tid", 10);
-        System.out.println(jwt);
+        //Map<String, Object> passportMap = buildVisa("AffiliationAndRole", 5000000, "", "", new String[]{""}, new String[]{"<by-identifier>"});
+        //String jwt = CreateToken.sign("secret", passportMap, "sid", "tid", 10);
+        //System.out.println(jwt);
 
-        //try to verify
-        DecodedJWT verifyJwt = CreateToken.verify(jwt,"secret");
-        System.out.println(verifyJwt);
+        verifyPassport();
+        // for (int i; i < asArray(verifyJwt.getClaim("ga4gh_passport_v1")); i++){
+        //}
 
+    }
+
+    public static void verifyPassport(){
+        
+        try{ //try to verify
+            String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqZXJlbXkuYWRhbXNAZ2E0Z2gub3JnIiwic2NvcGUiOiJvcGVuaWQiLCJjb250YWluZWRfdmlzYXMiOlsiU3RhcnRlcktpdERhdGFzZXRzQ29udHJvbGxlZEFjY2Vzc0dyYW50c0BodHRwczovL2RhdGFzZXRzLnN0YXJ0ZXJraXQuZ2E0Z2gub3JnLyIsIkRhdGFzZXRBbHBoYUBodHRwczovL2RhdGFzZXRzLnN0YXJ0ZXJraXQuZ2E0Z2gub3JnLyJdLCJpc3MiOiJodHRwczovL2dhNGdoLm9yZy8iLCJleHAiOjE2NTIzNzg5MjYsImlhdCI6MTY1MjM3NTMyNiwiZ2E0Z2hfcGFzc3BvcnRfdjEiOlsiZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKSVV6STFOaUo5LmV5SnpkV0lpT2lKcVpYSmxiWGt1WVdSaGJYTkFaMkUwWjJndWIzSm5JaXdpWjJFMFoyaGZkbWx6WVY5Mk1TSTZleUpoYzNObGNuUmxaQ0k2TVRZMU1qRTROell3TUN3aWRtbHpZVjlwYzNOMVpYSWlPaUpvZEhSd2N6b3ZMMlJoZEdGelpYUnpMbk4wWVhKMFpYSnJhWFF1WjJFMFoyZ3ViM0puTHlJc0ltSjVJam9pWkdGaklpd2ljMjkxY21ObElqb2lhSFIwY0hNNkx5OWtZWFJoYzJWMGN5NXpkR0Z5ZEdWeWEybDBMbWRoTkdkb0xtOXlaeThpTENKMGVYQmxJam9pUTI5dWRISnZiR3hsWkVGalkyVnpjMGR5WVc1MGN5SXNJblpoYkhWbElqb2lhSFIwY0hNNkx5OWtiMmt1YjNKbkx6RXdMakV3TXpndmN6UXhORE14TFRBeE9DMHdNakU1TFhraUxDSjJhWE5oWDI1aGJXVWlPaUpUZEdGeWRHVnlTMmwwUkdGMFlYTmxkSE5EYjI1MGNtOXNiR1ZrUVdOalpYTnpSM0poYm5SekluMHNJbWx6Y3lJNkltaDBkSEJ6T2k4dlpHRjBZWE5sZEhNdWMzUmhjblJsY210cGRDNW5ZVFJuYUM1dmNtY3ZJaXdpWlhod0lqb3hOalV5TXpjNE9USTJMQ0pwWVhRaU9qRTJOVEl6TnpVek1qWjkuNU9mQ0lBV0V5MkVaMmhkbWZnZ3VDVWdLSktybWFyTXZGTVgwNEkwZFZ2OCIsImV5SjBlWEFpT2lKS1YxUWlMQ0poYkdjaU9pSklVekkxTmlKOS5leUp6ZFdJaU9pSnFaWEpsYlhrdVlXUmhiWE5BWjJFMFoyZ3ViM0puSWl3aVoyRTBaMmhmZG1sellWOTJNU0k2ZXlKaGMzTmxjblJsWkNJNk1UWTFNakU0TnpZd01Dd2lkbWx6WVY5cGMzTjFaWElpT2lKb2RIUndjem92TDJSaGRHRnpaWFJ6TG5OMFlYSjBaWEpyYVhRdVoyRTBaMmd1YjNKbkx5SXNJbUo1SWpvaVpHRmpJaXdpYzI5MWNtTmxJam9pYUhSMGNITTZMeTlrWVhSaGMyVjBjeTV6ZEdGeWRHVnlhMmwwTG1kaE5HZG9MbTl5Wnk4aUxDSjBlWEJsSWpvaVEyOXVkSEp2Ykd4bFpFRmpZMlZ6YzBkeVlXNTBjeUlzSW5aaGJIVmxJam9pYUhSMGNITTZMeTlrYjJrdWIzSm5MekV3TGpFd016Z3ZjelF4TkRNeExUQXhPQzB3TWpFNUxYa2lMQ0oyYVhOaFgyNWhiV1VpT2lKRVlYUmhjMlYwUVd4d2FHRWlmU3dpYVhOeklqb2lhSFIwY0hNNkx5OWtZWFJoYzJWMGN5NXpkR0Z5ZEdWeWEybDBMbWRoTkdkb0xtOXlaeThpTENKbGVIQWlPakUyTlRJek56ZzVNallzSW1saGRDSTZNVFkxTWpNM05UTXlObjAuV0xUdlFfbmdKQW10ckJVVS1CclRLWi1Ya2l0UXpac19EdmR3NnhXVU42byJdfQ.zTP-h6NaG9XRNpPSQh4uwjf_cYGS5ZqRVUOmGm5mXZw";
+            DecodedJWT verifyJwt = CreateToken.verify(token,"insecureSecretPleaseOverride");
+            
+            //get passport claims
+            Claim ga4ghPassportV1 = verifyJwt.getClaim("ga4gh_passport_v1");
+            List<String> visaJwts = ga4ghPassportV1.asList(String.class);
+
+            //get visa claims
+            Claim ga4ghPassportNames = verifyJwt.getClaim("contained_visas");
+            List<String> visaNames = ga4ghPassportNames.asList(String.class);
+
+            //iterate through visas using name to get password
+            for (int i = 0; i < visaJwts.size(); i++) { 
+                DecodedJWT verifyVisa = CreateToken.verify(visaJwts.get(i), visaSecrets.get(visaNames.get(i)));
+                System.out.println(verifyVisa.getClaims());
+            }
+
+        } catch(Exception e) {
+
+        }
     }
 
     public static Map<String, Object> buildVisa(String type, Integer asserted, String value, String source, String[] conditions, String[] by){

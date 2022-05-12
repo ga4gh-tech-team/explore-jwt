@@ -25,7 +25,7 @@ public class CreateToken {
 
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
-                .withIssuer("GA4GH")
+                .withIssuer("https://ga4gh.org/")
                 .withHeader(headerClaims)
                 .withClaim("sub",subjectID)
                 .withArrayClaim("scope", new String[]{"openid"})
@@ -45,7 +45,6 @@ public class CreateToken {
         try{
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer("GA4GH")
                 .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             return jwt;
