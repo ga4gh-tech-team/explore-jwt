@@ -8,30 +8,30 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.*;
 import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.*;
+import java.util.Date;
 
 
 
 public class CreateToken {
 
-    public static String sign(String secret, Map<String, Object> passportMap){
+    public static String sign(String secret, Map<String, Object> passportMap, String subjectID, String tokenID, int expDays){
 
         try {
             Map<String, Object> headerClaims = new HashMap();
             headerClaims.put("typ", "JWT");
             headerClaims.put("alg", "RS256");
-            headerClaims.put("jku", "<JKS-URL>");
+            headerClaims.put("jku", new String[]{"<JKS-URL>"});
             headerClaims.put("kid", "<key-identifier>");            
 
-            Algorithm algorithm = Algorithm.HMAC256("secret");
+            Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
-                .withIssuer("auth0")
+                .withIssuer("GA4GH")
                 .withHeader(headerClaims)
-                .withClaim("iss","<issuer-URL>")
-                .withClaim("sub","<subject-identifier>")
-                .withClaim("iss","")
-                .withClaim("jti","<token-identifier>")
-                .withClaim("iat","<seconds-since-epoch>")
-                .withClaim("exp","<seconds-since-epoch>")
+                .withClaim("sub",subjectID)
+                .withArrayClaim("scope", new String[]{"openid"})
+                .withClaim("jti",tokenID)
+                .withClaim("iat", System.currentTimeMillis()/1000)
+                .withClaim("exp",(System.currentTimeMillis()/1000) + expDays * 86400)
                 .withClaim("ga4gh_visa_v1", passportMap)
                 .sign(algorithm);
             return token;
@@ -43,9 +43,9 @@ public class CreateToken {
 
     public static DecodedJWT verify(String token, String secret){
         try{
-            Algorithm algorithm = Algorithm.HMAC256("secret");
+            Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer("auth0")
+                .withIssuer("GA4GH")
                 .build(); //Reusable verifier instance
             DecodedJWT jwt = verifier.verify(token);
             return jwt;
@@ -55,8 +55,7 @@ public class CreateToken {
         
     }
 
-    public static DecodedJWT decode(){
-        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXUyJ9.eyJpc3MiOiJhdXRoMCJ9.AbIJTDMFc7yUa5MhvcP03nJPyCPzZtQcGEp-zWfOkEE";
+    public static DecodedJWT decode(String token){
         try {
             DecodedJWT jwt = JWT.decode(token);
             return jwt;
